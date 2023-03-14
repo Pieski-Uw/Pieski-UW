@@ -1,3 +1,1 @@
-# InzynieriaOprogramowania
-
-Sugestie projektu w branchu suggestions
+# Pieski-UW
