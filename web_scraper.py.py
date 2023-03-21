@@ -7,19 +7,19 @@ def parse_pet(href):
     soup = BeautifulSoup(html_text, 'lxml')
     details = soup.find('ul', class_ = 'petdetails')
     indents = details.find_all('li')
-    #W poniższych zmiennych zapisze dane, -1 oznacza brak danych
-    age = -1
-    breed = -1
-    gender = -1
-    weight = -1
-    number = -1
-    status = -1
-    date_in = -1
-    date_out = -1
-    box = -1
-    address_found = -1
-    group_link = -1
-    group_name = -1
+    #W poniższych zmiennych zapisze dane, None oznacza brak danych
+    age = None
+    breed = None
+    gender = None
+    weight = None
+    number = None
+    status = None
+    date_in = None
+    date_out = None
+    box = None
+    address_found = None
+    group_link = None
+    group_name = None
     for indent in indents:
         if (indent.text.startswith("W typie rasy")):
             breed = indent.find('strong').text
@@ -60,4 +60,6 @@ def parse_pet(href):
 # group_link: {group_link}
 # ''')
 
-parse_pet('https://napaluchu.waw.pl/pet/012300408/')
+
+
+#parse_pet('https://napaluchu.waw.pl/pet/012300408/')
