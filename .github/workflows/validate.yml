@@ -10,3 +10,13 @@ jobs:
           python-version: '3.10' 
       - run: pip install -r requirements.txt
       - run: pylint $(git ls-files '*.py')
+
+  blackstyle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10' 
+      - run: pip install -r requirements.txt
+      - run: black --check $(git ls-files '*.py')
