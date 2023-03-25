@@ -50,23 +50,4 @@ def parse_pet(href):
             info["group_link"] = indent.find('a').get('href') if indent.find('a') else None
     return info
 
-
-# debugging print function
-def print_pet_info(info):
-    print(f'''
-Breed: {info["breed"]}
-Age: {info["age"]}
-Gender: {info["gender"]}
-Weight: {info["weight"]}
-Number: {info["number"]}
-Status: {info["status"]}
-date_in: {info["date_in"]}
-date_out: {info["date_out"]}
-address_found: {info["address_found"]}
-box: {info["box"]}
-group_name: {info["group_name"]}
-group_link: {info["group_link"]}
-''')
-
-
-# print_pet_info(parse_pet('https://napaluchu.waw.pl/pet/012300408/'))
+# print(parse_pet('https://napaluchu.waw.pl/pet/012300408/'))
