@@ -76,5 +76,27 @@ def get_links_to_animals_from_page(href: str) -> list[str]:
     
     return result
 
+# Fetches links to subpages about animals all paged data
+# Implementation is single threaded and very slow - will probably need fix in the future
+#
+# Usage example
+# links = get_links_to_all_animal('https://napaluchu.waw.pl/zwierzeta/znalazly-dom')
+# ...
+#
+def get_links_to_all_animal(href: str) -> set[str]:
+    result: set[str] = set()
+    page_iter: int = 1
+    while True:
+        print(f'fetching from {page_iter}')
+        animals: list[str] = get_links_to_animals_from_page(f'{href}/?pet_page={page_iter}')
+        new_result = result | set(animals)
+        if len(result) == len(new_result):
+            break
+        page_iter += 1
+        result = new_result
+
+    return result
+
 #parse_pet('https://napaluchu.waw.pl/pet/012300408/')
-get_links_to_animals_from_page('https://napaluchu.waw.pl/zwierzeta/znalazly-dom/?pet_page=1')
+#get_links_to_animals_from_page('https://napaluchu.waw.pl/zwierzeta/znalazly-dom/?pet_page=1')
+#get_links_to_all_animal('https://napaluchu.waw.pl/zwierzeta/znalazly-dom')
