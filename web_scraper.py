@@ -1,6 +1,6 @@
+import re
 from bs4 import BeautifulSoup
 import requests
-import re
 
 def parse_pet(href):
     html = requests.get(href)
@@ -61,14 +61,19 @@ def parse_pet(href):
 # group_link: {group_link}
 # ''')
 
-# Fetches links to subpages about animals from given href
-#
-# Usage example
-# links = get_links_to_animals_from_page('https://napaluchu.waw.pl/zwierzeta/znalazly-dom/?pet_page=1')
-# ...
-#
+def __timed_get(href):
+    """Performs get request with preset timeout"""
+    return requests.get(href, timeout=3)
+
 def get_links_to_animals_from_page(href: str) -> list[str]:
-    html = requests.get(href)
+    """
+    Fetches links to subpages about animals from given href
+
+    Usage example
+    links = get_links_to_animals_from_page('https://napaluchu.waw.pl/zwierzeta/znalazly-dom/?pet_page=1')
+    ...
+    """
+    html = __timed_get(href)
     soup = BeautifulSoup(html.text, 'lxml')
     html_links = soup.find_all('a', href=re.compile('/pet/'), text='dowiedz się więcej')
 
@@ -76,14 +81,14 @@ def get_links_to_animals_from_page(href: str) -> list[str]:
     
     return result
 
-# Fetches links to subpages about animals all paged data
-# Implementation is single threaded and very slow - will probably need fix in the future
-#
-# Usage example
-# links = get_links_to_all_animal('https://napaluchu.waw.pl/zwierzeta/znalazly-dom')
-# ...
-#
 def get_links_to_all_animal(href: str) -> set[str]:
+    """ Fetches links to subpages about animals all paged data
+    Implementation is single threaded and very slow - will probably need fix in the future
+
+    Usage example
+    links = get_links_to_all_animal('https://napaluchu.waw.pl/zwierzeta/znalazly-dom')
+    ...
+    """
     result: set[str] = set()
     page_iter: int = 1
     while True:
