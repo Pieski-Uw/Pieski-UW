@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
+import re
 
 def parse_pet(href):
     html = requests.get(href)
@@ -60,6 +61,20 @@ def parse_pet(href):
 # group_link: {group_link}
 # ''')
 
+# Fetches links to subpages about animals from given href
+#
+# Usage example
+# links = get_links_to_animals_from_page('https://napaluchu.waw.pl/zwierzeta/znalazly-dom/?pet_page=1')
+# ...
+#
+def get_links_to_animals_from_page(href: str) -> list[str]:
+    html = requests.get(href)
+    soup = BeautifulSoup(html.text, 'lxml')
+    html_links = soup.find_all('a', href=re.compile('/pet/'), text='dowiedz się więcej')
 
+    result: list[str] = list(map(lambda tag: tag.get('href'), html_links))
+    
+    return result
 
 #parse_pet('https://napaluchu.waw.pl/pet/012300408/')
+get_links_to_animals_from_page('https://napaluchu.waw.pl/zwierzeta/znalazly-dom/?pet_page=1')
