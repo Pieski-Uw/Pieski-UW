@@ -1,9 +1,12 @@
 from django.db import models
 
-class Dog(models.Model):
+
+class Pet(models.Model):
+    """Model of pet table"""
+
     SEX = (
-        ('m', 'male'),
-        ('f', 'female'),
+        ("m", "male"),
+        ("f", "female"),
     )
     no = models.CharField(max_length=7)
     name = models.CharField(max_length=20)
