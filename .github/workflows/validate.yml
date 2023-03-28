@@ -9,7 +9,7 @@ jobs:
         with:
           python-version: '3.10' 
       - run: pip install -r requirements.txt
-      - run: pylint $(git ls-files '*.py')
+      - run: pylint --rcfile .pylint/.pylintrc $(git ls-files '*.py')
 
   blackstyle:
     runs-on: ubuntu-latest
