@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+from .secrets import postgresql
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,6 +27,7 @@ SECRET_KEY = "django-insecure-=4941=zsj*p&hnlm24dm#p1ihb%6w!!p8j**7bf7$ae4=zxopo
 DEBUG = True
 
 ALLOWED_HOSTS = []
+ALLOWED_HOSTS += postgresql.SECRETS["HOST"]
 
 
 # Application definition
@@ -75,8 +77,12 @@ WSGI_APPLICATION = "pieskiUW.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": postgresql.SECRETS["NAME"],
+        "USER": postgresql.SECRETS["USER"],
+        "PASSWORD": postgresql.SECRETS["PASSWORD"],
+        "HOST": postgresql.SECRETS["HOST"],
+        "PORT": 5432,
     }
 }
 
