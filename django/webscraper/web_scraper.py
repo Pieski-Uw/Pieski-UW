@@ -4,12 +4,14 @@
 import re
 from bs4 import BeautifulSoup
 import requests
-
-from webscraper.models import createPet
+import time
+from multiprocessing import Process
+import os
+import signal
+from webscraper.models import createPet, WebscrappingProcess, clearWebscrappingProcesses
 
 # pylint: disable=too-many-branches
 def parse_pet(href):
-    #TODO: add scraping name of a pet from a website as well!
     """
     Returns information about a pet, from a website "href" in
     a dictionary. (value None if no information)
@@ -21,8 +23,10 @@ def parse_pet(href):
     soup = BeautifulSoup(html_text, "lxml")
     details = soup.find("ul", class_="petdetails")
     indents = details.find_all("li")
+    name_field = soup.find("h2")
     # W poniższym słowniku zapisze dane, None oznacza brak danych
     info = {
+        "name" : None,
         "age": None,  # in months
         "breed": None,
         "gender": None,
@@ -36,6 +40,8 @@ def parse_pet(href):
         "group_link": None,
         "group_name": None,
     }
+    name = name_field.text.split(' ')[0]
+    info["name"] = name
 
     for indent in indents:
         if not indent.find("strong"):  # site layout changed significantly
@@ -75,7 +81,8 @@ def parse_pet(href):
 
 
 def __timed_get(href):
-    """Performs get request with preset timeout"""
+    """Performs get request with preset timeout, with a delay"""
+    time.sleep(3) # added in order not to get banned from the server
     return requests.get(href, timeout=3)
 
 
@@ -109,7 +116,10 @@ def get_links_to_all_animal(href: str) -> set[str]:
     result: set[str] = set()
     page_iter: int = 1
     while True:
-        print(f"fetching from {page_iter}")
+        logs = open("webscrapper_log.txt" , "a" )
+        logs.write(f"fetching from {page_iter}\n")
+        logs.close()
+
         animals: list[str] = get_links_to_animals_from_page(
             f"{href}/?pet_page={page_iter}"
         )
@@ -122,10 +132,60 @@ def get_links_to_all_animal(href: str) -> set[str]:
     return result
 
 def scrape():
+    """Does full webscrapping and adds new data to database.
+    Writes webscrapper progress in webscrapper_log.txt
+    Note: DO NOT use outside start_webscrapping()
+
+    Usage example
+    scrape()
+    ...
+    """
     pet_links = get_links_to_all_animal('https://napaluchu.waw.pl/zwierzeta/znalazly-dom')
+    it = 1
     for pet_link in pet_links:
         pet_info = parse_pet(pet_link)
         createPet(pet_info=pet_info, href=pet_link)
+        logs = open("webscrapper_log.txt" , "a" )
+        logs.write(f"Finished pet: {it}\n")
+        logs.close()
+        it += 1
+    clearWebscrappingProcesses()
+
+def kill_scrapping():
+    """Kills process currently scrapping if there is one - if not
+    does nothing.
+
+    Usage example
+    kill_scrapping()
+    ...
+    """
+    try:
+        proc = WebscrappingProcess.objects.get(working=True)
+    except WebscrappingProcess.DoesNotExist:
+        clearWebscrappingProcesses()
+        return
+    pid = proc.pid
+    proc.delete()
+    os.kill(pid, signal.SIGKILL)
+
+    logs = open("webscrapper_log.txt" , "a" )
+    logs.write("Webscrapping stopped\n")
+    logs.close()
+
+def start_scrapping():   
+    """Starts (or restarts) the scrapping process
+
+    Usage example
+    start_scrapping()
+    ...
+    """
+    kill_scrapping()
+    if os.path.isfile("webscrapper_log.txt"):
+        os.remove("webscrapper_log.txt")
+    p = Process(target=scrape)
+    p.daemon = True # detach a process
+    p.start()
+    WebscrappingProcess.objects.create(pid=p.pid, working=True)   
 
 # print(parse_pet('https://napaluchu.waw.pl/pet/012300408/'))
 # get_links_to_animals_from_page('https://napaluchu.waw.pl/zwierzeta/znalazly-dom/?pet_page=1')
