@@ -27,8 +27,22 @@ class Pet(models.Model):
     group_link = models.URLField()
     link = models.URLField()
 
+class WebscrappingProcess(models.Model):
+    '''Model of process doing the webscrapping '''
+    pid = models.IntegerField()
+    working = models.BooleanField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+#delete all WebscrappingProcess objects
+def clearWebscrappingProcesses():
+    '''Makes sure there are no redundant PIDs stored in database'''
+    procs = WebscrappingProcess.objects.all()
+    for process in procs:
+        process.delete()
+
 
 def createPet(pet_info, href): # pet_info is a dictionary as in web_scraper.py
+    '''Adds a pet to a database from info in a dictionary (parsed from href)'''
     try:
         pet = Pet.objects.get(link=href)
         return # this animal is already in database!
@@ -40,7 +54,8 @@ def createPet(pet_info, href): # pet_info is a dictionary as in web_scraper.py
     else: 
         gender = 'f'
     
-    Pet.objects.crete(
+    Pet.objects.create(
+        name=pet_info.name,
         no=pet_info.number,
         breed=pet_info.breed,
         gender=gender,
