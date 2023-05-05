@@ -1,10 +1,15 @@
+# file was previously in root directory of a project
+# authors: MateuszWasilewski, Sulnek
+
 import re
 from bs4 import BeautifulSoup
 import requests
 
+from webscraper.models import createPet
 
 # pylint: disable=too-many-branches
 def parse_pet(href):
+    #TODO: add scraping name of a pet from a website as well!
     """
     Returns information about a pet, from a website "href" in
     a dictionary. (value None if no information)
@@ -116,6 +121,11 @@ def get_links_to_all_animal(href: str) -> set[str]:
 
     return result
 
+def scrape():
+    pet_links = get_links_to_all_animal('https://napaluchu.waw.pl/zwierzeta/znalazly-dom')
+    for pet_link in pet_links:
+        pet_info = parse_pet(pet_link)
+        createPet(pet_info=pet_info, href=pet_link)
 
 # print(parse_pet('https://napaluchu.waw.pl/pet/012300408/'))
 # get_links_to_animals_from_page('https://napaluchu.waw.pl/zwierzeta/znalazly-dom/?pet_page=1')

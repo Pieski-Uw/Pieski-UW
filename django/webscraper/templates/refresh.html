@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html class="darkmode" lang="en">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset="utf-8">
+        <title> Refresh Database </title>
+        <link rel="stylesheet" type="text/css" href="../static/css/style.css">
+    </head>
+    <body>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="id" value="refresh">
+            <button type="submit"> Refresh </button>
+        </form>
+    </body>
+</html>
