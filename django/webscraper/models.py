@@ -1,5 +1,8 @@
+"""This module defines models (and useful functions connected to them),
+for webscraper application"""
 import datetime
 from django.db import models
+
 
 # model was previously in pieskiUW.models, but models shouldn't
 # be kept in a project directory. Read more:
@@ -27,33 +30,36 @@ class Pet(models.Model):
     group_link = models.URLField()
     link = models.URLField()
 
+
 class WebscrappingProcess(models.Model):
-    '''Model of process doing the webscrapping '''
+    """Model of process doing the webscrapping"""
+
     pid = models.IntegerField()
     working = models.BooleanField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
-#delete all WebscrappingProcess objects
-def clearWebscrappingProcesses():
-    '''Makes sure there are no redundant PIDs stored in database'''
+
+# delete all WebscrappingProcess objects
+def clear_webscrapping_processes():
+    """Makes sure there are no redundant PIDs stored in database"""
     procs = WebscrappingProcess.objects.all()
     for process in procs:
         process.delete()
 
 
-def createPet(pet_info, href): # pet_info is a dictionary as in web_scraper.py
-    '''Adds a pet to a database from info in a dictionary (parsed from href)'''
+def create_pet(pet_info, href):  # pet_info is a dictionary as in web_scraper.py
+    """Adds a pet to a database from info in a dictionary (parsed from href)"""
     try:
-        pet = Pet.objects.get(link=href)
-        return # this animal is already in database!
+        Pet.objects.get(link=href)
+        return  # this animal is already in database!
     except Pet.DoesNotExist:
-        pass # this is a new link to pet!
+        pass  # this is a new link to pet!
 
     if pet_info.gender == "samiec":
-        gender = 'm'
-    else: 
-        gender = 'f'
-    
+        gender = "m"
+    else:
+        gender = "f"
+
     Pet.objects.create(
         name=pet_info.name,
         no=pet_info.number,
@@ -67,5 +73,5 @@ def createPet(pet_info, href): # pet_info is a dictionary as in web_scraper.py
         box=pet_info.box,
         group_name=pet_info.group_name,
         group_link=pet_info.group_name,
-        link=href
+        link=href,
     )
