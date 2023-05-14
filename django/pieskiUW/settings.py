@@ -87,7 +87,7 @@ DATABASES = {
         "USER": postgresql.SECRETS["USER"],
         "PASSWORD": postgresql.SECRETS["PASSWORD"],
         "HOST": postgresql.SECRETS["HOST"],
-        "PORT": 5432,
+        "PORT": postgresql.SECRETS["PORT"],
     }
 }
 
