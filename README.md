@@ -1,4 +1,9 @@
 # Pieski-UW
+![Uptime Kuma](https://kuma.arturkamieniecki.pl//api/badge/1/uptime/24?label=Uptime%20Kuma)
+## Database uptime
+Database uptime can be checked at this address:  
+[https://kuma.arturkamieniecki.pl/status/pieskiuw](https://kuma.arturkamieniecki.pl/status/pieskiuw)
+
 ## Development database
 
 A file inside `django/pieskiUW/secrets` folder called `postgresql.py` should be added for proper database connection.  
