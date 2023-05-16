@@ -1,6 +1,4 @@
 """This module implements useful functions related to webscraping"""
-
-# file was previously in root directory of a project
 # authors: MateuszWasilewski, Sulnek
 
 import time
@@ -16,6 +14,9 @@ from webscraper.models import (
     WebscrappingProcess,
     clear_webscrapping_processes,
 )
+
+TIMED_GET_DELAY = 3
+TIMED_GET_TIMEOUT = 3
 
 
 # pylint: disable=too-many-branches
@@ -90,8 +91,8 @@ def parse_pet(href):
 
 def __timed_get(href):
     """Performs get request with preset timeout, with a delay"""
-    time.sleep(3)  # added in order not to get banned from the server
-    return requests.get(href, timeout=3)
+    time.sleep(TIMED_GET_DELAY)  # added in order not to get banned from the server
+    return requests.get(href, timeout=TIMED_GET_TIMEOUT)
 
 
 def get_links_to_animals_from_page(href: str) -> list[str]:
@@ -124,7 +125,7 @@ def get_links_to_all_animal(href: str) -> set[str]:
     result: set[str] = set()
     page_iter: int = 1
     while True:
-        logging.info("fetching from %lu\n", page_iter)
+        logging.info("fetching from %s\n", f"{href}/?pet_page={page_iter}")
 
         animals: list[str] = get_links_to_animals_from_page(
             f"{href}/?pet_page={page_iter}"
@@ -154,7 +155,7 @@ def scrape():
     for pet_link in pet_links:
         pet_info = parse_pet(pet_link)
         create_pet(pet_info=pet_info, href=pet_link)
-        logging.info("Finished pet: %lu\n", pet_iter)
+        logging.info("Finished pet: %lu, link: %s\n", pet_iter, pet_link)
         pet_iter += 1
     clear_webscrapping_processes()
 
@@ -180,7 +181,7 @@ def kill_scrapping():
 
 
 def start_scrapping():
-    """Starts (or restarts) the scrapping process
+    """Starts (or restarts if there is another one already working) the scrapping process
 
     Usage example
     start_scrapping()

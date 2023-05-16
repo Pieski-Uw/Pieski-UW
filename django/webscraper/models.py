@@ -4,10 +4,6 @@ import datetime
 from django.db import models
 
 
-# model was previously in pieskiUW.models, but models shouldn't
-# be kept in a project directory. Read more:
-# https://stackoverflow.com/questions/2610727/django-project-models-py-versus-app-models-py#:~:text=Django%20models%20can%20only%20reside%20in%20applications%2C%20not,in%20the%20places%20where%20it%20would%20make%20sense.
-# Credit for creating model to jpalikowska
 class Pet(models.Model):
     """Model of pet table"""
 
@@ -39,7 +35,6 @@ class WebscrappingProcess(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
 
-# delete all WebscrappingProcess objects
 def clear_webscrapping_processes():
     """Makes sure there are no redundant PIDs stored in database"""
     procs = WebscrappingProcess.objects.all()
