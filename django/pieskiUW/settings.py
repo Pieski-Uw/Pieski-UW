@@ -28,7 +28,7 @@ SECRET_KEY = "django-insecure-=4941=zsj*p&hnlm24dm#p1ihb%6w!!p8j**7bf7$ae4=zxopo
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["127.0.0.1"]
 ALLOWED_HOSTS += postgresql.SECRETS["HOST"]
 
 
