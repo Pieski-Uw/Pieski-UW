@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html class="darkmode" lang="en">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset="utf-8">
+        <title> Stop Refreshing the Database </title>
+        {% load static %}
+        <link rel="stylesheet" type="text/css" href="{% static 'webscraper/css/style.css' %}">
+    </head>
+    <body>
+        <div class="confirmation">
+            <h3>You are about to stop refreshing the database. Are you sure? </h3>
+            <div class="answers">
+                <form method="POST" class="answer" id="yes">
+                    {% csrf_token %}
+                    <input type="hidden" name="id" value="kill_scrapping">
+                    <button type="submit"> Yes </button>
+                </form>
+                <a href="{% url 'menu' %}" class="answer" id="no">
+                    <button> No </button>
+                </a>
+            </div>
+        </div>
+    </body>
+</html>

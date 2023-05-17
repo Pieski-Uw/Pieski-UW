@@ -1,2 +1,3 @@
 .venv
 **/secrets/postgresql.py
+webscrapper_log.txt
