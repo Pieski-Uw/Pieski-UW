@@ -66,23 +66,23 @@ def parse_pet(href):
                 else:  # unit.startswith("m") - months
                     info["age"] = int(num)
         elif indent.text.startswith("Płeć"):
-            info["gender"] = indent.find("strong").text
+            info["gender"] = indent.find("strong").text.strip()
         elif indent.text.startswith("Waga"):
             info["weight"] = int(indent.find("strong").text.split()[0])
         elif indent.text.startswith("Nr"):
-            info["number"] = indent.find("strong").text
+            info["number"] = indent.find("strong").text.strip()
         elif indent.text.startswith("Status"):
-            info["status"] = indent.find("strong").text
+            info["status"] = indent.find("strong").text.strip()
         elif indent.text.startswith("Przyjęty"):
-            info["date_in"] = indent.find("strong").text
+            info["date_in"] = indent.find("strong").text.strip()
         elif indent.text.startswith("Wydany"):
-            info["date_out"] = indent.find("strong").text
+            info["date_out"] = indent.find("strong").text.strip()
         elif indent.text.startswith("Znaleziony"):
-            info["address_found"] = indent.find("strong").text
+            info["address_found"] = indent.find("strong").text.strip()
         elif indent.text.startswith("Boks"):
-            info["box"] = indent.find("strong").text
+            info["box"] = indent.find("strong").text.strip()
         elif indent.text.startswith("Grupa"):
-            info["group_name"] = indent.find("strong").text
+            info["group_name"] = indent.find("strong").text.strip()
             info["group_link"] = (
                 indent.find("a").get("href") if indent.find("a") else None
             )
