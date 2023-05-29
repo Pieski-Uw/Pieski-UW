@@ -19,4 +19,5 @@ from django.urls import include, path
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("webscraper/", include("webscraper.urls")),
+    path("", include("interface.urls")),
 ]
