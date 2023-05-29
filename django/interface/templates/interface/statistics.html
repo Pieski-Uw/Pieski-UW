@@ -1,0 +1,108 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Pieski</title>
+  <link rel="stylesheet" href="{% static 'interface/style.css' %}">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+</head>
+<body>
+    <div class="grid-container">
+        <div class="nav">
+            <ul>
+                <li class="left"><a href="{% url 'index' %}">Home</a></li>
+                <li class="left"><a class="active" href="{% url 'statistics' %}">Statistics</a></li>
+                <li class="left"><a href="{% url 'estimate' %}">Estimate</a></li>
+                <li class="right"><a href="{% url 'webscraper_menu' %}">Update database</a></li>
+            </ul>
+        </div>
+
+        <div class="main">
+            <canvas id="weightChart"></canvas>
+            <canvas id="ageChart"></canvas>
+        </div>
+    </div>
+    <script>
+        fetch('{% url 'API_weights' %}')
+            .then(response => response.json())
+            .then(data => {
+                data = data["pets_by_weight"]
+                console.log(data);
+                var xValues = [];
+                var yValues = [];
+
+                data.sort(function(a, b) {
+                    return a.weight - b.weight;
+                  });
+
+                for (var element in data) {
+                    console.log(element);
+                    xValues.push(data[element]["weight"]);
+                    yValues.push(data[element]["count"]);
+                }
+
+                console.log(xValues);
+                console.log(yValues);
+
+                var barColors = "rgb(84, 8, 147)";
+                new Chart("weightChart", {
+                    type: "bar",
+                    data: {
+                        labels: xValues,
+                        datasets: [{
+                            backgroundColor: barColors,
+                            data: yValues
+                        }]
+                    },
+                    options: {
+                        legend: {display: false},
+                        title: {
+                            display: true,
+                            text: "Weight distribution"
+                        }
+                    }
+                });
+            });
+
+        fetch('{% url 'API_ages' %}')
+            .then(response => response.json())
+            .then(data => {
+                data = data['pets_by_age']
+            
+                var xValues = [];
+                var yValues = [];
+
+                data.sort(function(a, b) {
+                    return a.age - b.age;
+                  });
+
+                for (var element in data) {
+                    console.log(element);
+                    xValues.push(data[element]["age"]);
+                    yValues.push(data[element]["count"]);
+                }
+
+                var backgroundColors = ["#8e5ea2","#3cba9f","#e8c3b9","#c45850","#8e5ea2"];
+                var backgroundColors = backgroundColors.slice(0, xValues.length);
+                new Chart("ageChart", {
+                    type: "pie",
+                    data: {
+                        labels: xValues,
+                        datasets: [{
+                            backgroundColor: backgroundColors,
+                            data: yValues
+                        }]
+                    },
+                    options: {
+                        title: {
+                            display: true,
+                            text: "Age distribution"
+                        }
+                    }
+                });
+            });
+    </script>
+</body>
+</html>
