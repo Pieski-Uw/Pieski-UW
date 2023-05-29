@@ -37,7 +37,7 @@ ALLOWED_HOSTS += postgresql.SECRETS["HOST"]
 INSTALLED_APPS = [
     "interface",
     "webscraper",
-    'django_extensions',
+    "django_extensions",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
