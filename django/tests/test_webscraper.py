@@ -1,3 +1,7 @@
+"""Test for webscraper module"""
+
+# pylint: disable=unused-argument
+
 from unittest.mock import patch
 from unittest.mock import MagicMock
 import requests
@@ -8,12 +12,18 @@ from tests.test_data.doggy import doggy
 from tests.test_data.list import lists
 
 
+@pytest.fixture(name="remove_get_delay")
+def fixture_remove_get_delay(mocker):
+    """Remove delay from get function for tests"""
+    return mocker.patch("webscraper.web_scraper.TIMED_GET_DELAY", 0)
+
+
 @pytest.mark.django_db()
 def test_empty_db():
     """Test if creating local test db works"""
 
 
-def test_get_mock():
+def test_get_mock(remove_get_delay):
     """Test if mock works"""
     mock_response = MagicMock()
     mock_response.status_code = 200
@@ -24,7 +34,7 @@ def test_get_mock():
         assert requests.get("https://google.com", timeout=5) == mock_response
 
 
-def test_animal_page_mock():
+def test_animal_page_mock(remove_get_delay):
     """Test if saved single animal page is parsed correctly"""
     mock_response = MagicMock()
     mock_response.status_code = 200
@@ -70,7 +80,7 @@ def test_create_pet_twice():
     assert len(models.Pet.objects.all()) == 1
 
 
-def test_empty_list():
+def test_empty_list(remove_get_delay):
     """Test if parsing empty list of pets works"""
 
     mock_response = MagicMock()
@@ -87,7 +97,7 @@ def test_empty_list():
         assert len(links) == 0
 
 
-def test_list():
+def test_list(remove_get_delay):
     """Test if parsing not empty list of pets works"""
 
     mock_response = MagicMock()
@@ -105,7 +115,7 @@ def test_list():
         assert len(links) == 15
 
 
-def test_animal_page_real():
+def test_animal_page_real(remove_get_delay):
     """
     Test if real animal page is parsed correctly
     and it hasn't changed substantially
