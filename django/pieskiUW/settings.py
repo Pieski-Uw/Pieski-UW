@@ -132,3 +132,10 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Celery settings
+""" TODO: These setting are temporary and should be changed in the future.
+    Probably celery will be a local service run in a production docker container.
+    Celery is not needed if you don't want to use webscraper app. """
+CELERY_BROKER_URL = "redis://localhost:6379/0"
+CELERY_RESULT_BACKEND = "redis://localhost:6379/0"

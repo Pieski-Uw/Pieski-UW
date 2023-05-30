@@ -21,5 +21,5 @@ def kill_scrapping_view(request):
 
 
 def menu(request):
-    """View of webscrapper menu"""
+    """View of webscraper menu"""
     return render(request, "index.html", {})
