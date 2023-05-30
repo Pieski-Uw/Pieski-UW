@@ -133,6 +133,14 @@ def get_links_to_all_animal(href: str) -> set[str]:
         new_result = result | set(animals)
         if len(result) == len(new_result):
             break
+        
+        pet_iter = 1
+        for animal in set(animals) - result:
+            pet_info = parse_pet(animal)
+            create_pet(pet_info=pet_info, href=animal)
+            logging.info("Finished pet: %lu, link: %s\n", str(page_iter) + ":" + str(pet_iter), animal)
+            pet_iter += 1
+
         page_iter += 1
         result = new_result
 
@@ -151,12 +159,12 @@ def scrape():
     pet_links = get_links_to_all_animal(
         "https://napaluchu.waw.pl/zwierzeta/znalazly-dom"
     )
-    pet_iter = 1
-    for pet_link in pet_links:
-        pet_info = parse_pet(pet_link)
-        create_pet(pet_info=pet_info, href=pet_link)
-        logging.info("Finished pet: %lu, link: %s\n", pet_iter, pet_link)
-        pet_iter += 1
+    # pet_iter = 1
+    # for pet_link in pet_links:
+    #     pet_info = parse_pet(pet_link)
+    #     create_pet(pet_info=pet_info, href=pet_link)
+    #     logging.info("Finished pet: %lu, link: %s\n", pet_iter, pet_link)
+    #     pet_iter += 1
     clear_webscrapping_processes()
 
 
@@ -175,7 +183,10 @@ def kill_scrapping():
         return
     pid = proc.pid
     proc.delete()
-    os.kill(pid, signal.SIGKILL)
+    try:    
+        os.kill(pid, signal.SIGKILL)
+    except:
+        logging.info("Webscrapping stopped, process not found\n")
 
     logging.info("Webscrapping stopped\n")
 
