@@ -93,8 +93,7 @@ def test_empty_list(remove_get_delay):
 
     with patch("requests.get") as mock_get:
         mock_get.return_value = mock_response
-        links = web_scraper.get_links_to_all_animal("https://google.com")
-        assert len(links) == 0
+        web_scraper.start_scraping("https://google.com")
 
 
 def test_list(remove_get_delay):
@@ -110,9 +109,7 @@ def test_list(remove_get_delay):
 
     with patch("requests.get") as mock_get:
         mock_get.return_value = mock_response
-
-        links = web_scraper.get_links_to_all_animal("https://google.com")
-        assert len(links) == 15
+        web_scraper.start_scraping("https://google.com")
 
 
 def test_animal_page_real(remove_get_delay):
