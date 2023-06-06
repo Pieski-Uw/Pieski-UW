@@ -61,7 +61,7 @@ def parse_pet(href):
             if indent.find("strong"):
                 age_string = indent.find("strong").text
                 num, unit = age_string.split()
-                if unit.startswith("l"):
+                if unit.startswith("l") or unit.startswith("r"):
                     info["age"] = 12 * int(num)
                 else:  # unit.startswith("m") - months
                     info["age"] = int(num)
