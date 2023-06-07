@@ -123,7 +123,7 @@ def get_links_to_animals_from_page(href: str) -> list[str]:
     return result
 
 
-def start_scraping(href: str):
+def start_scraping(href: str, async_db: bool = False):
     """Fetches links to subpages about animals all paged data
     and processes them one by one creating Pet objects
     Implementation is single threaded and very slow - will probably need fix in the future
@@ -146,8 +146,12 @@ def start_scraping(href: str):
 
         pet_iter = 1
         for animal in set(animals) - result:
-            pet_info = parse_pet("https://napaluchu.waw.pl" + animal)
-            create_pet.delay(pet_info=pet_info, href=animal)
+            animal_link = "https://napaluchu.waw.pl" + animal
+            pet_info = parse_pet(animal_link)
+            if async_db:
+                create_pet.delay(pet_info=pet_info, href=animal_link)
+            else:
+                create_pet(pet_info=pet_info, href=animal_link)
             logging.info(
                 "Finished pet: %s, link: %s\n",
                 str(page_iter) + ":" + str(pet_iter),
@@ -159,7 +163,7 @@ def start_scraping(href: str):
         result = new_result
 
 
-def scrape():
+def scrape(async_db: bool = False):
     """Does full webscraping and adds new data to database.
     Writes webscraper progress in webscraper_log.txt
     Note: DO NOT use outside start_webscraping()
@@ -168,7 +172,7 @@ def scrape():
     scrape()
     ...
     """
-    start_scraping("https://napaluchu.waw.pl/zwierzeta/znalazly-dom")
+    start_scraping("https://napaluchu.waw.pl/zwierzeta/znalazly-dom", async_db)
 
     clear_webscraping_processes()
 
