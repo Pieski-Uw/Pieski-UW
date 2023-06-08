@@ -19,9 +19,21 @@
             </ul>
         </div>
 
-        <div class="main">
-            <canvas id="weightChart"></canvas>
-            <canvas id="ageChart"></canvas>
+        <div class="main stats">
+            <canvas id="weightChart" class="chartW"></canvas>
+            <canvas id="ageChart" class="chartA"></canvas>
+            <table class="links">
+                <caption>List</caption>
+                <thead>
+                    <tr>
+                        <th>name</th>
+                        <th>link</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+
         </div>
     </div>
     <script>
@@ -47,7 +59,7 @@
                 console.log(yValues);
 
                 var barColors = "rgb(84, 8, 147)";
-                new Chart("weightChart", {
+                const weightChart = new Chart("weightChart", {
                     type: "bar",
                     data: {
                         labels: xValues,
@@ -60,17 +72,52 @@
                         legend: {display: false},
                         title: {
                             display: true,
-                            text: "Weight distribution"
+                            text: "Weight distribution in kg"
                         }
                     }
                 });
+                function clickWeightHandler(click) {
+                    const points = weightChart.getElementsAtEventForMode(click, 'nearest', {
+                        intersect: true}, true);
+                    if (points[0]) {
+                        const dataset = points[0]._datasetIndex;
+                        const index = points[0]._index;
+                        const value = weightChart.data.datasets[dataset].data[index];
+                        const caption = document.querySelectorAll('caption');
+                        var capt = "Weigth: " + index + " kg";
+                        caption[0].innerText = capt;
+                        const tr = document.querySelectorAll('caption');
+                        console.log(click);
+                        const body = document.querySelectorAll('tbody');
+                        var text = "";
+                        fetch('{% url 'API_get_pets_weight' 50 %}')
+                        .then(response => response.json())
+                        .then(data => {
+                            data = data["pets"];
+                            const obj = JSON.parse(data);
+                            for (var element in obj) {
+                                text += "<tr><td>";
+                                text += obj[element]["fields"]["name"];
+                                text += "</td><td><a href='https://napaluchu.waw.pl";
+                                text += obj[element]["fields"]["link"];
+                                text += "' target=”_blank” >";
+                                text += obj[element]["fields"]["link"];
+                                text += "</a></td></tr>";
+                            }
+                            body[0].innerHTML = text;
+                        });
+
+                    }
+                }
+                weightChart.canvas.onclick = clickWeightHandler;
             });
+            
 
         fetch('{% url 'API_ages' %}')
             .then(response => response.json())
             .then(data => {
-                data = data['pets_by_age']
-            
+                data = data["pets_by_age"]
+                console.log(data);
                 var xValues = [];
                 var yValues = [];
 
@@ -84,24 +131,61 @@
                     yValues.push(data[element]["count"]);
                 }
 
-                var backgroundColors = ["#8e5ea2","#3cba9f","#e8c3b9","#c45850","#8e5ea2"];
-                var backgroundColors = backgroundColors.slice(0, xValues.length);
-                new Chart("ageChart", {
-                    type: "pie",
+                console.log(xValues);
+                console.log(yValues);
+
+                var barColors = "rgb(84, 8, 147)";
+                const ageChart = new Chart("ageChart", {
+                    type: "bar",
                     data: {
                         labels: xValues,
                         datasets: [{
-                            backgroundColor: backgroundColors,
+                            backgroundColor: barColors,
                             data: yValues
                         }]
                     },
                     options: {
+                        legend: {display: false},
                         title: {
                             display: true,
-                            text: "Age distribution"
+                            text: "Age distribution in months"
                         }
                     }
                 });
+                function clickAgeHandler(click) {
+                    const points = ageChart.getElementsAtEventForMode(click, 'nearest', {
+                        intersect: true}, true);
+                    if (points[0]) {
+                        const dataset = points[0]._datasetIndex;
+                        const index = points[0]._index;
+                        const value = ageChart.data.datasets[dataset].data[index];
+                        const caption = document.querySelectorAll('caption');
+                        var capt = "Age: " + index + " months";
+                        caption[0].innerText = capt;
+                        const tr = document.querySelectorAll('caption');
+                        console.log(click);
+                        const body = document.querySelectorAll('tbody');
+                        var text = "";
+                        fetch('{% url 'API_get_pets_age' 6 %}')
+                        .then(response => response.json())
+                        .then(data => {
+                            data = data["pets"];
+                            const obj = JSON.parse(data);
+                            for (var element in obj) {
+                                text += "<tr><td>";
+                                text += obj[element]["fields"]["name"];
+                                text += "</td><td><a href='https://napaluchu.waw.pl";
+                                text += obj[element]["fields"]["link"];
+                                text += "' target=”_blank” >";
+                                text += obj[element]["fields"]["link"];
+                                text += "</a></td></tr>";
+                            }
+                            body[0].innerHTML = text;
+                        });
+
+                    }
+                }
+                ageChart.canvas.onclick = clickAgeHandler;
             });
     </script>
 </body>

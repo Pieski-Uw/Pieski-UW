@@ -88,8 +88,41 @@ label {
 }
 canvas {
     width:100%;
-    max-width:600px;
+    max-width:800px;
 }
 input {
     width:130px;
+}
+.stats {
+    display: grid;
+    grid-template-areas:
+        'chartW links'
+        'chartA links';
+    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
+}
+.stats > div {
+    border: none;
+}
+.chartW {
+    grid-area: chartW;
+}
+.chartA {
+    grid-area: chartA;
+}
+.links {
+    grid-area: links;
+}
+table, th, tr, td {
+    padding: 10px;
+    border: 1px solid #999;
+    width: 100%;
+    border-collapse: collapse;
+    height: 30px;
+}
+caption {
+    padding: 10px;
+    font-weight: bold;
+    color: var(--hov-col);
+    font-size: 150%;
 }
