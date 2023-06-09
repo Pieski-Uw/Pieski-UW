@@ -2,13 +2,12 @@
 
 # pylint: disable=unused-argument
 
-from unittest.mock import patch
-from unittest.mock import MagicMock
 import requests
 import pytest
+import responses
 
 from webscraper import web_scraper, models
-from tests.test_data.doggy import doggy
+from tests.test_data.animal import doggy, milka
 from tests.test_data.list import lists
 
 
@@ -18,36 +17,48 @@ def fixture_remove_get_delay(mocker):
     return mocker.patch("webscraper.web_scraper.TIMED_GET_DELAY", 0)
 
 
+def read_mock_file(file_path):
+    """Read mock file"""
+    with open(file_path, mode="r", encoding="utf-8") as mock_file:
+        return mock_file.read()
+
+
+def assert_animal_eq(db_animal: models.Pet, animal, link):
+    """Checks field by field if animal in db is the same as animal_data"""
+    assert db_animal.name == animal["name"]
+    assert db_animal.no == animal["number"]
+    assert db_animal.breed == animal["breed"]
+    assert db_animal.age == animal["age"]
+    assert db_animal.weight == animal["weight"]
+    assert db_animal.status == animal["status"]
+    assert db_animal.address_found == animal["address_found"]
+    assert db_animal.box == animal["box"]
+    assert db_animal.group_name == animal["group_name"]
+    assert db_animal.group_link == animal["group_link"]
+    assert db_animal.link == link
+
+
 @pytest.mark.django_db()
 def test_empty_db():
     """Test if creating local test db works"""
+    assert len(models.Pet.objects.all()) == 0
 
 
+@responses.activate
 def test_get_mock(remove_get_delay):
     """Test if mock works"""
-    mock_response = MagicMock()
-    mock_response.status_code = 200
-    mock_response.json.return_value = {"key": "value"}
-
-    with patch("requests.get") as mock_get:
-        mock_get.return_value = mock_response
-        assert requests.get("https://google.com", timeout=5) == mock_response
+    responses.add(responses.GET, "https://google.com", body="{}", status=200)
+    assert requests.get("https://google.com", timeout=5).json() == {}
 
 
+@responses.activate
 def test_animal_page_mock(remove_get_delay):
     """Test if saved single animal page is parsed correctly"""
-    mock_response = MagicMock()
-    mock_response.status_code = 200
-
-    # specify encoding to avoid warning
-    mock_response.encoding = "utf-8"
-    with open(doggy.MOCK_FILE, mode="r", encoding="utf-8") as mock_file:
-        mock_response.text = mock_file.read()
-
-    with patch("requests.get") as mock_get:
-        mock_get.return_value = mock_response
-        parsed_animal = web_scraper.parse_pet("https://google.com")
-        assert parsed_animal == doggy.DATA
+    responses.add(
+        responses.GET, doggy.LINK, body=read_mock_file(doggy.MOCK_FILE), status=200
+    )
+    parsed_animal = web_scraper.parse_pet(doggy.LINK)
+    assert parsed_animal == doggy.DATA
 
 
 @pytest.mark.django_db()
@@ -58,17 +69,7 @@ def test_create_pet():
     assert len(models.Pet.objects.all()) == 1
 
     db_animal = models.Pet.objects.get(name=doggy.DATA["name"])
-    assert db_animal.name == doggy.DATA["name"]
-    assert db_animal.no == doggy.DATA["number"]
-    assert db_animal.breed == doggy.DATA["breed"]
-    assert db_animal.age == doggy.DATA["age"]
-    assert db_animal.weight == doggy.DATA["weight"]
-    assert db_animal.status == doggy.DATA["status"]
-    assert db_animal.address_found == doggy.DATA["address_found"]
-    assert db_animal.box == doggy.DATA["box"]
-    assert db_animal.group_name == doggy.DATA["group_name"]
-    assert db_animal.group_link == doggy.DATA["group_link"]
-    assert db_animal.link == doggy.LINK
+    assert_animal_eq(db_animal, doggy.DATA, doggy.LINK)
 
 
 @pytest.mark.django_db()
@@ -77,42 +78,56 @@ def test_create_pet_twice():
 
     web_scraper.create_pet(doggy.DATA, doggy.LINK)
     web_scraper.create_pet(doggy.DATA, doggy.LINK)
-    assert len(models.Pet.objects.all()) == 1
+    animals = models.Pet.objects.all()
+    assert len(animals) == 1
+    assert_animal_eq(animals[0], doggy.DATA, doggy.LINK)
 
 
+@responses.activate
+@pytest.mark.django_db()
 def test_empty_list(remove_get_delay):
     """Test if parsing empty list of pets works"""
+    responses.add(
+        responses.GET,
+        lists.FIRST_LIST_URL,
+        body=read_mock_file(lists.EMPTY_LIST_PATH),
+        status=200,
+    )
 
-    mock_response = MagicMock()
-    mock_response.status_code = 200
-
-    # specify encoding to avoid warning
-    mock_response.encoding = "utf-8"
-    with open(lists.EMPTY_LIST_PATH, mode="r", encoding="utf-8") as mock_file:
-        mock_response.text = mock_file.read()
-
-    with patch("requests.get") as mock_get:
-        mock_get.return_value = mock_response
-        links = web_scraper.get_links_to_all_animal("https://google.com")
-        assert len(links) == 0
+    web_scraper.scrape()
+    assert len(models.Pet.objects.all()) == 0
 
 
+@responses.activate
+@pytest.mark.django_db(transaction=True)
 def test_list(remove_get_delay):
     """Test if parsing not empty list of pets works"""
+    responses.add(
+        responses.GET,
+        lists.FIRST_LIST_URL,
+        body=read_mock_file(lists.SIMPLE_LIST_PATH),
+        status=200,
+    )
+    responses.add(
+        responses.GET,
+        lists.SECOND_LIST_URL,
+        body=read_mock_file(lists.EMPTY_LIST_PATH),
+        status=200,
+    )
+    responses.add(
+        responses.GET, doggy.LINK, body=read_mock_file(doggy.MOCK_FILE), status=200
+    )
+    responses.add(
+        responses.GET, milka.LINK, body=read_mock_file(milka.MOCK_FILE), status=200
+    )
 
-    mock_response = MagicMock()
-    mock_response.status_code = 200
+    web_scraper.scrape(False)
+    animals = models.Pet.objects.all()
+    assert len(animals) == 2
+    animals.order_by("name")
 
-    # specify encoding to avoid warning
-    mock_response.encoding = "utf-8"
-    with open(lists.FULL_LIST_PATH, mode="r", encoding="utf-8") as mock_file:
-        mock_response.text = mock_file.read()
-
-    with patch("requests.get") as mock_get:
-        mock_get.return_value = mock_response
-
-        links = web_scraper.get_links_to_all_animal("https://google.com")
-        assert len(links) == 15
+    assert_animal_eq(animals.get(name=doggy.DATA["name"]), doggy.DATA, doggy.LINK)
+    assert_animal_eq(animals.get(name=milka.DATA["name"]), milka.DATA, milka.LINK)
 
 
 def test_animal_page_real(remove_get_delay):

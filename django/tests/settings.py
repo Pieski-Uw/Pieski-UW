@@ -9,6 +9,5 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "tests/test_data/db.sqlite3",
-        "ATOMIC_REQUESTS": True,
     }
 }

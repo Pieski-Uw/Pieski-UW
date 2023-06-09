@@ -16,4 +16,4 @@ DATA = {
 
 LINK = "https://napaluchu.waw.pl/pet/012202677/"
 
-MOCK_FILE = "django/tests/test_data/doggy/doggy.html"
+MOCK_FILE = "django/tests/test_data/animal/doggy.html"

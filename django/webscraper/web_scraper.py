@@ -1,21 +1,20 @@
 """This module implements useful functions related to webscraping"""
 # authors: MateuszWasilewski, Sulnek
 
-import time
-import os
-import signal
-import re
 import logging
+import os
+import re
+import signal
+import time
 from multiprocessing import Process
+
 import requests
 from bs4 import BeautifulSoup
-from webscraper.models import (
-    create_pet,
-    WebscrappingProcess,
-    clear_webscrapping_processes,
-)
+from webscraper.models import WebscrapingProcess, clear_webscraping_processes
 
-TIMED_GET_DELAY = 3
+from .tasks import create_pet
+
+TIMED_GET_DELAY = 11
 TIMED_GET_TIMEOUT = 3
 
 
@@ -92,7 +91,12 @@ def parse_pet(href):
 def __timed_get(href):
     """Performs get request with preset timeout, with a delay"""
     time.sleep(TIMED_GET_DELAY)  # added in order not to get banned from the server
-    return requests.get(href, timeout=TIMED_GET_TIMEOUT)
+    try:
+        return requests.get(href, timeout=TIMED_GET_TIMEOUT)
+    except requests.exceptions.Timeout:
+        logging.warning("Request timed out")
+        time.sleep(20)
+        return requests.get(href, timeout=TIMED_GET_TIMEOUT)
 
 
 def get_links_to_animals_from_page(href: str) -> list[str]:
@@ -114,12 +118,13 @@ def get_links_to_animals_from_page(href: str) -> list[str]:
     return result
 
 
-def get_links_to_all_animal(href: str) -> set[str]:
+def start_scraping(href: str, async_db: bool = False):
     """Fetches links to subpages about animals all paged data
+    and processes them one by one creating Pet objects
     Implementation is single threaded and very slow - will probably need fix in the future
 
     Usage example
-    links = get_links_to_all_animal('https://napaluchu.waw.pl/zwierzeta/znalazly-dom')
+    links = start_scraping('https://napaluchu.waw.pl/zwierzeta/znalazly-dom')
     ...
     """
     result: set[str] = set()
@@ -133,31 +138,38 @@ def get_links_to_all_animal(href: str) -> set[str]:
         new_result = result | set(animals)
         if len(result) == len(new_result):
             break
+
+        pet_iter = 1
+        for animal in set(animals) - result:
+            animal_link = "https://napaluchu.waw.pl" + animal
+            pet_info = parse_pet(animal_link)
+            if async_db:
+                create_pet.delay(pet_info=pet_info, href=animal_link)
+            else:
+                create_pet(pet_info=pet_info, href=animal_link)
+            logging.info(
+                "Finished pet: %s, link: %s\n",
+                str(page_iter) + ":" + str(pet_iter),
+                animal,
+            )
+            pet_iter += 1
+
         page_iter += 1
         result = new_result
 
-    return result
 
-
-def scrape():
-    """Does full webscrapping and adds new data to database.
-    Writes webscrapper progress in webscrapper_log.txt
-    Note: DO NOT use outside start_webscrapping()
+def scrape(async_db: bool = True):
+    """Does full webscraping and adds new data to database.
+    Writes webscraper progress in webscraper_log.txt
+    Note: DO NOT use outside start_webscraping()
 
     Usage example
     scrape()
     ...
     """
-    pet_links = get_links_to_all_animal(
-        "https://napaluchu.waw.pl/zwierzeta/znalazly-dom"
-    )
-    pet_iter = 1
-    for pet_link in pet_links:
-        pet_info = parse_pet(pet_link)
-        create_pet(pet_info=pet_info, href=pet_link)
-        logging.info("Finished pet: %lu, link: %s\n", pet_iter, pet_link)
-        pet_iter += 1
-    clear_webscrapping_processes()
+    start_scraping("https://napaluchu.waw.pl/zwierzeta/znalazly-dom", async_db)
+
+    clear_webscraping_processes()
 
 
 def kill_scrapping():
@@ -169,15 +181,18 @@ def kill_scrapping():
     ...
     """
     try:
-        proc = WebscrappingProcess.objects.get(working=True)
-    except WebscrappingProcess.DoesNotExist:
-        clear_webscrapping_processes()
+        proc = WebscrapingProcess.objects.get(working=True)
+    except WebscrapingProcess.DoesNotExist:
+        clear_webscraping_processes()
         return
     pid = proc.pid
     proc.delete()
-    os.kill(pid, signal.SIGKILL)
+    try:
+        os.kill(pid, signal.SIGKILL)
+    except ProcessLookupError:
+        logging.info("Webscraping stopped, process not found\n")
 
-    logging.info("Webscrapping stopped\n")
+    logging.info("Webscraping stopped\n")
 
 
 def start_scrapping():
@@ -187,12 +202,12 @@ def start_scrapping():
     start_scrapping()
     ...
     """
-    if os.path.isfile("webscrapper_log.txt"):
-        os.remove("webscrapper_log.txt")
-    with open("webscrapper_log.txt", "a", encoding="utf-8") as file:
+    if os.path.isfile("webscraper_log.txt"):
+        os.remove("webscraper_log.txt")
+    with open("webscraper_log.txt", "a", encoding="utf-8") as file:
         file.close()  # creating a file
     logging.basicConfig(
-        filename="webscrapper_log.txt",
+        filename="webscraper_log.txt",
         filemode="a",
         format="%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s",
         datefmt="%H:%M:%S",
@@ -202,7 +217,7 @@ def start_scrapping():
     proc = Process(target=scrape)
     proc.daemon = True  # detach a process
     proc.start()
-    WebscrappingProcess.objects.create(pid=proc.pid, working=True)
+    WebscrapingProcess.objects.create(pid=proc.pid, working=True)
 
 
 # print(parse_pet('https://napaluchu.waw.pl/pet/012300408/'))
