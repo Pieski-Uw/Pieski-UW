@@ -163,7 +163,7 @@ def start_scraping(href: str, async_db: bool = False):
         result = new_result
 
 
-def scrape(async_db: bool = False):
+def scrape(async_db: bool = True):
     """Does full webscraping and adds new data to database.
     Writes webscraper progress in webscraper_log.txt
     Note: DO NOT use outside start_webscraping()

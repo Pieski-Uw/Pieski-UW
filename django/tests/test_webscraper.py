@@ -121,7 +121,7 @@ def test_list(remove_get_delay):
         responses.GET, milka.LINK, body=read_mock_file(milka.MOCK_FILE), status=200
     )
 
-    web_scraper.scrape()
+    web_scraper.scrape(False)
     animals = models.Pet.objects.all()
     assert len(animals) == 2
     animals.order_by("name")
