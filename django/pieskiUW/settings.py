@@ -10,10 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+from os import environ
 from pathlib import Path
-
-# pylint: disable-next=no-name-in-module
-from .secrets import postgresql
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,7 +27,7 @@ SECRET_KEY = "django-insecure-=4941=zsj*p&hnlm24dm#p1ihb%6w!!p8j**7bf7$ae4=zxopo
 DEBUG = True
 
 ALLOWED_HOSTS = ["127.0.0.1"]
-ALLOWED_HOSTS += postgresql.SECRETS["HOST"]
+ALLOWED_HOSTS += [environ.get("POSTGRES_HOST")]
 
 
 # Application definition
@@ -83,11 +81,11 @@ WSGI_APPLICATION = "pieskiUW.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": postgresql.SECRETS["NAME"],
-        "USER": postgresql.SECRETS["USER"],
-        "PASSWORD": postgresql.SECRETS["PASSWORD"],
-        "HOST": postgresql.SECRETS["HOST"],
-        "PORT": postgresql.SECRETS["PORT"],
+        "NAME": environ.get("POSTGRES_NAME"),
+        "USER": environ.get("POSTGRES_USER"),
+        "PASSWORD": environ.get("POSTGRES_PASSWORD"),
+        "HOST": environ.get("POSTGRES_HOST"),
+        "PORT": environ.get("POSTGRES_PORT"),
     }
 }
 
@@ -137,5 +135,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 """ TODO: These setting are temporary and should be changed in the future.
     Probably celery will be a local service run in a production docker container.
     Celery is not needed if you don't want to use webscraper app. """
-CELERY_BROKER_URL = "redis://localhost:6379/0"
-CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
+CELERY_URL = f"redis://{environ.get('REDIS_HOST')}:{environ.get('REDIS_PORT')}/0"
+CELERY_BROKER_URL = CELERY_URL
+CELERY_RESULT_BACKEND = CELERY_URL

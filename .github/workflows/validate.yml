@@ -9,7 +9,6 @@ jobs:
         with:
           python-version: '3.10' 
       - run: pip install -r requirements.txt
-      - run: django/initSecrets.sh ${{secrets.POSTGRESQL_HOST}} ${{secrets.POSTGRESQL_PORT}} ${{secrets.POSTGRESQL_USER}} ${{secrets.POSTGRESQL_PASS}} ${{secrets.POSTGRESQL_NAME}}
       - run: pylint --rcfile .pylint/.pylintrc --load-plugins pylint_django --django-settings-module=pieskiUW.settings $(git ls-files '*.py')
 
   blackstyle:
@@ -20,5 +19,4 @@ jobs:
         with:
           python-version: '3.10' 
       - run: pip install -r requirements.txt
-      - run: django/initSecrets.sh ${{secrets.POSTGRESQL_HOST}} ${{secrets.POSTGRESQL_PORT}} ${{secrets.POSTGRESQL_USER}} ${{secrets.POSTGRESQL_PASS}} ${{secrets.POSTGRESQL_NAME}}
       - run: black --check $(git ls-files '*.py')
