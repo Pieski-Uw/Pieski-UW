@@ -10,7 +10,6 @@ from multiprocessing import Process
 
 import requests
 from bs4 import BeautifulSoup
-from fake_useragent import UserAgent
 from webscraper.models import WebscrapingProcess, clear_webscraping_processes
 
 from .tasks import create_pet
@@ -93,15 +92,11 @@ def __timed_get(href):
     """Performs get request with preset timeout, with a delay"""
     time.sleep(TIMED_GET_DELAY)  # added in order not to get banned from the server
     try:
-        return requests.get(
-            href, timeout=TIMED_GET_TIMEOUT, headers={"User-Agent": UserAgent().random}
-        )
+        return requests.get(href, timeout=TIMED_GET_TIMEOUT)
     except requests.exceptions.Timeout:
         logging.warning("Request timed out")
         time.sleep(20)
-        return requests.get(
-            href, timeout=TIMED_GET_TIMEOUT, headers={"User-Agent": UserAgent().random}
-        )
+        return requests.get(href, timeout=TIMED_GET_TIMEOUT)
 
 
 def get_links_to_animals_from_page(href: str) -> list[str]:
