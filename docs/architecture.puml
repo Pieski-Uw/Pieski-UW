@@ -1,0 +1,19 @@
+@startuml architecture
+
+top to bottom direction
+
+"Django server" as (UI)
+together {
+  "Postgres Database" as (DB)
+  "Redis instance" as (Redis)
+}
+"Celery Worker" as (Celery)
+
+:User: -l-> (UI)
+
+(UI) --> (DB): reads from
+(UI) --> (Redis): put webscraping request
+(Celery) -u-> (Redis): Get webscraping request
+(Celery) -u-> (DB): Put scraped data
+(Celery) -r-> :Scraped website:
+@enduml
