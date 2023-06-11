@@ -62,9 +62,9 @@
                     <ul>
                         {% for pet in example_pets %}
                             {% if pet.name != "" %}
-                                <li>{{ pet.name }} <a href="https://napaluchu.waw.pl{{pet.link}}">https://napaluchu.waw.pl{{pet.link}}</a></li>
+                                <li>{{ pet.name }} <a href="https://napaluchu.waw.pl{{pet.link}}" target="_blank">https://napaluchu.waw.pl{{pet.link}}</a></li>
                             {% else %}
-                                <li>No name found <a href="https://napaluchu.waw.pl{{pet.link}}">https://napaluchu.waw.pl{{pet.link}}</a></li>
+                                <li>No name found <a href="https://napaluchu.waw.pl{{pet.link}}" target="_blank">https://napaluchu.waw.pl{{pet.link}}</a></li>
                             {% endif %}
                         {% endfor %}
                     </ul>

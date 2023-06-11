@@ -6,6 +6,9 @@ from django.shortcuts import render
 from django.db.models.manager import BaseManager
 
 NUMBER_OF_PETS_NEEDED_FOR_ESTIMATE = 10
+"""The number of pets needed to estimate the average stay in the shelter.
+The number 10 was selected to eliminate queries where the number of pets is too low
+for a good estimate."""
 
 
 def index(request):
@@ -26,10 +29,7 @@ def estimate(request):
     NUMBER_OF_PETS_NEEDED_FOR_ESTIMATE pets. Otherwise error is displayed.
     If an estimate was calculated some example pets are displayed."""
 
-    context = {}
-
     breeds = Pet.objects.values("breed").exclude(breed="").distinct()
-    context["breeds"] = breeds
 
     filters = {
         "breed": request.GET.get("breed"),
@@ -37,8 +37,6 @@ def estimate(request):
         "weight": request.GET.get("weight"),
         "gender": request.GET.get("sex"),
     }
-
-    context.update(filters)
 
     if filters["gender"] is not None:
         filters["gender"] = filters["gender"].lower()
@@ -68,7 +66,11 @@ def estimate(request):
             max_weight = int(filters["weight"])
 
     if pets.count() < NUMBER_OF_PETS_NEEDED_FOR_ESTIMATE:
-        context["error"] = "Not enough pets to estimate"
+        context = {
+            "breeds": breeds,
+            "error": "Not enough pets to estimate",
+        }
+        context.update(filters)
         return render(request, "interface/estimate.html", context)
 
     filtered_pets = filter_pets(pets, min_age, max_age, min_weight, max_weight)
@@ -82,10 +84,15 @@ def estimate(request):
         sum_days += (pet.date_out - pet.date_in).days
 
     if filtered_pets.count() - pets_skipped < NUMBER_OF_PETS_NEEDED_FOR_ESTIMATE:
-        context["error"] = "Not enough pets to estimate"
+        context = {"breeds": breeds, "error": "Not enough pets to estimate"}
     else:
-        context["estimate"] = int(sum_days / (filtered_pets.count() - pets_skipped))
-        context["example_pets"] = filtered_pets.order_by("?")[:9]
+        context = {
+            "breeds": breeds,
+            "estimate": int(sum_days / (filtered_pets.count() - pets_skipped)),
+            "example_pets": filtered_pets.order_by("?")[:9],
+        }
+
+    context.update(filters)
 
     return render(request, "interface/estimate.html", context)
 

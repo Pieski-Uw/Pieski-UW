@@ -4,32 +4,29 @@ body {
     margin: 0;
     font-family: Georgia;
     background-color: white;
-    --text-col: #111;
-    --nav-col: rgb(84, 8, 147);
+    --text-col:  #111;
+    --nav-col:  rgb(84, 8, 147);
     --hov-col: rgb(249, 182, 0);
     --active-col: rgb(254, 200, 51);
     --nav-text-col: white;
 }
-
 .grid-container {
     display: grid;
     grid-template-areas:
-        'nav'
-        'main';
+      'nav'
+      'main';
     grid-template-rows: 1fr 10fr;
     width: 100vw;
     height: 100vh;
 }
-
-.grid-container>div {
+.grid-container > div {
     border: none;
 }
-
 .nav {
     grid-area: nav;
 }
 
-.nav>ul {
+.nav > ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -37,18 +34,17 @@ body {
     background-color: var(--nav-col);
     height: 100%;
 }
-
-.nav>ul>li.left {
+  
+.nav > ul > li.left {
     float: left;
     height: 100%;
 }
-
-.nav>ul>li.right {
+.nav > ul > li.right {
     float: right;
     height: 100%;
 }
-
-.nav>ul>li>a {
+  
+.nav > ul > li > a {
     display: block;
     color: var(--nav-text-col);
     text-align: center;
@@ -57,11 +53,10 @@ body {
     height: 100%;
     font-size: 30px;
 }
-
-.nav>ul>li>a:hover {
+  
+.nav > ul > li > a:hover {
     background-color: var(--hov-col);
 }
-
 .active {
     background-color: var(--active-col);
 }
@@ -69,42 +64,34 @@ body {
 .main {
     padding: 10px;
 }
-
 .home {
     text-align: center;
 }
-
 .est {
     text-align: center;
     font-size: 20px;
 }
-
 .result {
     text-align: center;
     font-size: 30px;
 }
-
-.result>span {
+.result > span {
     color: var(--hov-col);
     font-weight: bold;
 }
-
 label {
-    width: 200px;
+    width: 100px;
     display: inline-block;
 }
-
 .sex {
     text-align: left;
 }
-
 canvas {
     width: 100%;
     max-width: 600px;
 }
-
 input {
-    width: 300px;
+    width: 200px;
 }
 
 .error {
