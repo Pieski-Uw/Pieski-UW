@@ -34,7 +34,7 @@ pathspec==0.11.1
 platformdirs==3.1.1
 pluggy==1.0.0
 prompt-toolkit==3.0.38
-psycopg2-binary==2.9.5
+psycopg2-binary==2.9.6
 pylint==2.17.1
 pylint-django==2.5.3
 pylint-plugin-utils==0.8.1
