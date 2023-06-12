@@ -3,6 +3,7 @@ from webscraper.models import Pet, PetFoundCords
 from django.db.models import Count
 from django.http import JsonResponse
 from django.shortcuts import render
+from django.core import serializers
 from django.db.models.manager import BaseManager
 
 NUMBER_OF_PETS_NEEDED_FOR_ESTIMATE = 10
@@ -199,3 +200,15 @@ def count_pets_by_weight(request):
     """API view that counts all pets that have the same weight and returns a JSON object"""
     pets_by_weight = Pet.objects.values("weight").annotate(count=Count("pk"))
     return JsonResponse({"pets_by_weight": list(pets_by_weight)})
+
+
+def get_pets_by_weight(request, key):
+    """API view that returns in JSON all pets that have weight = id"""
+    pets = serializers.serialize("json", Pet.objects.filter(weight=key))
+    return JsonResponse({"pets": pets})
+
+
+def get_pets_by_age(request, key):
+    """API view that returns in JSON all pets that have age = id"""
+    pets = serializers.serialize("json", Pet.objects.filter(age=key))
+    return JsonResponse({"pets": pets})
