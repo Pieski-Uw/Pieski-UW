@@ -2,7 +2,7 @@
 
 if [ "${DJANGO_RUN_MIGRATIONS}" = "true" ]; then
     python django/manage.py makemigrations webscraper;
-    python django/manage.py makemigrations pieskiUW;
+    python django/manage.py makemigrations;
 fi;
 
 python django/manage.py migrate --noinput;
