@@ -1,7 +1,8 @@
 """This module defines views for webscraper application"""
+from webscraper.tasks import calculate_all_pet_cords
+
 from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import redirect, render
-from webscraper.tasks import calculate_all_pet_cords
 
 from .web_scraper import kill_scrapping, start_scrapping
 
@@ -23,10 +24,14 @@ def kill_scrapping_view(request):
         return redirect("webscraper_menu")
     return render(request, "kill_scrapping.html", {})
 
+
 @staff_member_required
 def start_calculating_pet_cords(request):
     """View to confirm that one wishes to start calculating pet cords"""
-    if request.method == "POST" and request.POST.get("id", None) == "start_calculating_pet_cords":
+    if (
+        request.method == "POST"
+        and request.POST.get("id", None) == "start_calculating_pet_cords"
+    ):
         calculate_all_pet_cords.delay()
         return redirect("webscraper_menu")
     return render(request, "start_calculating_pet_cords.html", {})

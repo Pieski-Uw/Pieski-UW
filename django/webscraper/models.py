@@ -33,6 +33,7 @@ class WebscrapingProcess(models.Model):
     working = models.BooleanField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
+
 class PetFoundCords(models.Model):
     """Model of coordinates where pets were found"""
 
