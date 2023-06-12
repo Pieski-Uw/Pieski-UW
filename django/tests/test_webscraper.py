@@ -93,6 +93,7 @@ def test_empty_list(remove_get_delay):
         body=read_mock_file(lists.EMPTY_LIST_PATH),
         status=200,
     )
+    responses.add_passthru(geolocation.PASSTHROUGH_URL)
 
     web_scraper.scrape()
     assert len(models.Pet.objects.all()) == 0
@@ -120,12 +121,7 @@ def test_list(remove_get_delay):
     responses.add(
         responses.GET, milka.LINK, body=read_mock_file(milka.MOCK_FILE), status=200
     )
-    responses.add(
-        responses.GET,
-        geolocation.LINK,
-        json=geolocation.RAW_RESPONSE,
-        status=200,
-    )
+    responses.add_passthru(geolocation.PASSTHROUGH_URL)
 
     web_scraper.scrape(False)
     animals = models.Pet.objects.all()
