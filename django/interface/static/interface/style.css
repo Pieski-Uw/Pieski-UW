@@ -80,8 +80,11 @@ body {
     font-weight: bold;
 }
 label {
-    width: 100px;
+    width: 200px;
     display: inline-block;
+}
+input {
+    width: 300px;
 }
 .sex {
     text-align: left;
@@ -93,12 +96,22 @@ canvas {
 input {
     width:130px;
 }
+.error {
+    color: red;
+    font-weight: bold;
+    text-align: center;
+}
+
+.examples {
+    margin: auto;
+    width: fit-content;
+}
 .stats {
     display: grid;
     grid-template-areas:
         'chartW links'
         'chartA links';
-    grid-template-rows: 1fr 1fr;
+    grid-template-rows: 450px 450px;
     grid-template-columns: 1fr 1fr;
 }
 .stats > div {
@@ -125,4 +138,9 @@ caption {
     font-weight: bold;
     color: var(--hov-col);
     font-size: 150%;
+}
+.scrollable {
+    width: auto;
+    height: 800px;
+    overflow-y: scroll;
 }

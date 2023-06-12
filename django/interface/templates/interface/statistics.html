@@ -22,6 +22,7 @@
         <div class="main stats">
             <canvas id="weightChart" class="chartW"></canvas>
             <canvas id="ageChart" class="chartA"></canvas>
+            <div class="scrollable">
             <table class="links">
                 <caption>List</caption>
                 <thead>
@@ -33,7 +34,7 @@
                 <tbody>
                 </tbody>
             </table>
-
+            </div>
         </div>
     </div>
     <script>
@@ -90,9 +91,10 @@
                         console.log(click);
                         const body = document.querySelectorAll('tbody');
                         var text = "";
-                        fetch('{% url 'API_get_pets_weight' 50 %}')
+                        fetch('/api/weights/'+index)
                         .then(response => response.json())
                         .then(data => {
+                            console.log(data);
                             data = data["pets"];
                             const obj = JSON.parse(data);
                             for (var element in obj) {
@@ -158,17 +160,24 @@
                     if (points[0]) {
                         const dataset = points[0]._datasetIndex;
                         const index = points[0]._index;
+                        let age;
+                        if (index > 12) 
+                            age = (index - 11) * 12;
+                        else
+                            age = index;
+                        
                         const value = ageChart.data.datasets[dataset].data[index];
                         const caption = document.querySelectorAll('caption');
-                        var capt = "Age: " + index + " months";
+                        var capt = "Age: " + age + " months";
                         caption[0].innerText = capt;
                         const tr = document.querySelectorAll('caption');
                         console.log(click);
                         const body = document.querySelectorAll('tbody');
                         var text = "";
-                        fetch('{% url 'API_get_pets_age' 6 %}')
+                        fetch('/api/ages/'+age)
                         .then(response => response.json())
                         .then(data => {
+                            console.log(data);
                             data = data["pets"];
                             const obj = JSON.parse(data);
                             for (var element in obj) {
