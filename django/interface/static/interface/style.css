@@ -93,9 +93,15 @@ canvas {
     width:100%;
     max-width:800px;
 }
+
 input {
-    width:130px;
+    width: 200px;
 }
+
+#map { 
+    height: 700px; 
+}
+  
 .error {
     color: red;
     font-weight: bold;
@@ -106,6 +112,7 @@ input {
     margin: auto;
     width: fit-content;
 }
+
 .stats {
     display: grid;
     grid-template-areas:
@@ -144,3 +151,4 @@ caption {
     height: 800px;
     overflow-y: scroll;
 }
+
