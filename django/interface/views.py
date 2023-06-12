@@ -32,12 +32,14 @@ def count_pets_by_weight(request):
     pets_by_weight = Pet.objects.values("weight").annotate(count=Count("pk"))
     return JsonResponse({"pets_by_weight": list(pets_by_weight)})
 
-def get_pets_by_weight(request,id):
+
+def get_pets_by_weight(request, id):
     """API view that returns in JSON all pets that have weight = id"""
-    petss = serializers.serialize("json", Pet.objects.filter(weight = id))
+    petss = serializers.serialize("json", Pet.objects.filter(weight=id))
     return JsonResponse({"pets": petss})
 
-def get_pets_by_age(request,id):
+
+def get_pets_by_age(request, id):
     """API view that returns in JSON all pets that have age = id"""
-    petss = serializers.serialize("json", Pet.objects.filter(age = id))
+    petss = serializers.serialize("json", Pet.objects.filter(age=id))
     return JsonResponse({"pets": petss})
