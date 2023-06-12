@@ -4,7 +4,7 @@
 ![Uptime Kuma](https://kuma.arturkamieniecki.pl//api/badge/1/uptime/24?label=Uptime%20Kuma)
 
 ## Getting Started
-Live demo is being prepared and will be available in the future.  
+Live demo is available at: [https://pieski.arturkamieniecki.pl]( https://pieski.arturkamieniecki.pl)  
 To run this project localy:
 ```bash
 git clone https://github.com/Pieski-Uw/Pieski-UW.git
