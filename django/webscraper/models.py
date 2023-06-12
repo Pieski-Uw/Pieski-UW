@@ -33,6 +33,13 @@ class WebscrapingProcess(models.Model):
     working = models.BooleanField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
+class PetFoundCords(models.Model):
+    """Model of coordinates where pets were found"""
+
+    pet = models.OneToOneField(Pet, on_delete=models.CASCADE)
+    geo_lat = models.FloatField(null=True)
+    geo_lng = models.FloatField(null=True)
+
 
 def clear_webscraping_processes():
     """Makes sure there are no redundant PIDs stored in database"""

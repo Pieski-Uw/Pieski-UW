@@ -1,7 +1,8 @@
 import datetime
 
 from celery import shared_task
-from .models import Pet
+from .models import Pet, PetFoundCords
+from webscraper.geo_cords import calculate_single_pet_cords
 
 
 @shared_task
@@ -18,7 +19,7 @@ def create_pet(pet_info, href):  # pet_info is a dictionary as in web_scraper.py
     else:
         gender = "f"
 
-    Pet.objects.create(
+    pet = Pet.objects.create(
         name=pet_info["name"],
         no=pet_info["number"],
         breed=pet_info["breed"],
@@ -34,3 +35,16 @@ def create_pet(pet_info, href):  # pet_info is a dictionary as in web_scraper.py
         age=pet_info["age"],
         link=href,
     )
+
+    calculate_single_pet_cords(pet)
+
+@shared_task
+def calculate_all_pet_cords():
+    """Calculates coordinates of all pets"""
+    pets = Pet.objects.all()
+    for pet in pets:
+        try:
+            PetFoundCords.objects.get(pet=pet)
+        except PetFoundCords.DoesNotExist:
+            #this pet does not have coordinates calculated yet
+            calculate_single_pet_cords(pet)
