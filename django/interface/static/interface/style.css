@@ -87,14 +87,25 @@ label {
     text-align: left;
 }
 canvas {
-    width:100%;
-    max-width:600px;
+    width: 100%;
+    max-width: 600px;
 }
 
 input {
-    width:130px;
+    width: 200px;
 }
 
 #map { 
     height: 700px; 
+}
+  
+.error {
+    color: red;
+    font-weight: bold;
+    text-align: center;
+}
+
+.examples {
+    margin: auto;
+    width: fit-content;
 }

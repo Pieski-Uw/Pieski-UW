@@ -6,13 +6,6 @@
   <meta charset="UTF-8">
   <title>Pieski</title>
   <link rel="stylesheet" href="{% static 'interface/style.css' %}">
-  <script type="text/JavaScript">
-    function showResult(){
-        var weight = document.getElementById("weight").value;
-        var age = document.getElementById("age").value;
-        result.innerHTML= weight * age / 5;
-    }
-</script>
 </head>
 <body>
     <div class="grid-container">
@@ -25,22 +18,59 @@
                 <li class="right"><a href="{% url 'webscraper_menu' %}">Update database</a></li>
             </ul>
         </div>
+        <datalist id="breed-datalist">
+            {% for breed in breeds %}
+                <option value="{{ breed.breed }}">
+            {% endfor %}
+        </datalist>
         <div class="main">
-            <form class="est">
+            {% if error %}
+                <h2 class="error">{{ error }}</h2>
+            {% endif %}
+            <form class="est" method="get">
                 <p>Enter dog parameters</p>
                 <label for="breed">Breed: </label>
-                <input type="text" id="breed" name="breed"><br>
+                <input list="breed-datalist" type="text" id="breed" name="breed" value="{{ breed }}"><br>
                 <label for="weigth">Weight:</label>
-                <input type="number" id="weight" name="weight" min="0" max="100"><br>
-                <label for="age">Age: </label>
-                <input type="number" id="age" name="age" min="0" max="25"><br>
-                <input type="radio" id="male" name="sex" value="M">
+                <input type="number" id="weight" name="weight" min="0" max="100" value="{{ weight }}"><br>
+                <label for="age">Age (in months): </label>
+                <input type="number" id="age" name="age" min="0" max="10000" value="{{ age }}" ><br>
+                {% if gender == 'm' %}
+                    <input type="radio" id="male" name="sex" value="m" checked="checked">
+                {% else %}
+                    <input type="radio" id="male" name="sex" value="m">
+                {% endif %}
                 <label class="sex" for="male">Male</label><br>
-                <input type="radio" id="female" name="sex" value="F">
+                {% if gender == 'f' %}
+                    <input type="radio" id="female" name="sex" value="f" checked="checked">
+                {% else %}
+                    <input type="radio" id="female" name="sex" value="f">
+                {% endif %}
                 <label class="sex" for="female">Female</label><br>
-                <input type="button" onclick="showResult()" value="Show">
+                {% if gender %}
+                    <input type="radio" id="none" name="sex" value="">
+                {% else %}
+                <input type="radio" id="none" name="sex" value="" checked="checked">
+                {% endif %}
+                <label class="sex" for="none">Not selected</label><br>
+                <input type="submit" value="Show">
             </form>
-            <p class="result"> Estimated months spent in shelter: <span id = "result"></span></p>
+            <p class="result"> Estimated days spent in shelter: <span id = "result"> {{ estimate }} </span></p>
+            {% comment %} create a list of example pets {% endcomment %}
+            {% if example_pets %}
+                <div class="examples">
+                    <p>Example pets of the selected category:</p>
+                    <ul>
+                        {% for pet in example_pets %}
+                            {% if pet.name != "" %}
+                                <li>{{ pet.name }} <a href="https://napaluchu.waw.pl{{pet.link}}" target="_blank">https://napaluchu.waw.pl{{pet.link}}</a></li>
+                            {% else %}
+                                <li>No name found <a href="https://napaluchu.waw.pl{{pet.link}}" target="_blank">https://napaluchu.waw.pl{{pet.link}}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
         </div>
     </div>
 </body>
