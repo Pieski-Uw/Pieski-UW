@@ -11,11 +11,14 @@
         <div class="confirmation">
             <h3> Welcome to the webscrapper menu. What would you like to do? </h3>
             <div class="answers">
-                <a href="{% url 'refresh_db_view' %}" class="answer" id="yes">
+                <a href="{% url 'refresh_db_view' %}" class="answer">
                     <button> Start refreshing the database </button>
                 </a>
-                <a href="{% url 'kill_scrapping_view' %}" class="answer" id="no">
+                <a href="{% url 'kill_scrapping_view' %}" class="answer">
                     <button> Stop refreshing the database </button>
+                </a>
+                <a href="{% url 'start_calculating_pet_cords' %}" class="answer">
+                    <button> Start calculating pet cords </button>
                 </a>
             </div>
         </div>

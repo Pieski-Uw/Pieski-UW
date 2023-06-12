@@ -32,6 +32,10 @@ html, body {
     flex-direction: row;
 }
 
+.answer {
+    display: flex;
+}
+
 #yes {
     align-self: flex-start;
     display: flex;
