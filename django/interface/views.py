@@ -12,7 +12,6 @@ The number 10 was selected to eliminate queries where the number of pets is too 
 for a good estimate."""
 
 
-
 def index(request):
     """View of interface index"""
     return render(request, "interface/index.html")
