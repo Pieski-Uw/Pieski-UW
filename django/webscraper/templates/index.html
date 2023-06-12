@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html class="darkmode" lang="en">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset="utf-8">
+        <title> Scraper </title>
+        {% load static %}
+        <link rel="stylesheet" type="text/css" href="{% static 'webscraper/css/style.css' %}">
+    </head>
+    <body>
+        <div class="confirmation">
+            <h3> Welcome to the webscrapper menu. What would you like to do? </h3>
+            <div class="answers">
+                <a href="{% url 'refresh_db_view' %}" class="answer">
+                    <button> Start refreshing the database </button>
+                </a>
+                <a href="{% url 'kill_scrapping_view' %}" class="answer">
+                    <button> Stop refreshing the database </button>
+                </a>
+                <a href="{% url 'start_calculating_pet_cords' %}" class="answer">
+                    <button> Start calculating pet cords </button>
+                </a>
+            </div>
+        </div>
+    </body>
+</html>

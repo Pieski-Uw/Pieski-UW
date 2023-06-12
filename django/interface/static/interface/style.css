@@ -1,0 +1,154 @@
+body {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    font-family: Georgia;
+    background-color: white;
+    --text-col:  #111;
+    --nav-col:  rgb(84, 8, 147);
+    --hov-col: rgb(249, 182, 0);
+    --active-col: rgb(254, 200, 51);
+    --nav-text-col: white;
+}
+.grid-container {
+    display: grid;
+    grid-template-areas:
+      'nav'
+      'main';
+    grid-template-rows: 1fr 10fr;
+    width: 100vw;
+    height: 100vh;
+}
+.grid-container > div {
+    border: none;
+}
+.nav {
+    grid-area: nav;
+}
+
+.nav > ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: var(--nav-col);
+    height: 100%;
+}
+  
+.nav > ul > li.left {
+    float: left;
+    height: 100%;
+}
+.nav > ul > li.right {
+    float: right;
+    height: 100%;
+}
+  
+.nav > ul > li > a {
+    display: block;
+    color: var(--nav-text-col);
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    height: 100%;
+    font-size: 30px;
+}
+  
+.nav > ul > li > a:hover {
+    background-color: var(--hov-col);
+}
+.active {
+    background-color: var(--active-col);
+}
+
+.main {
+    padding: 10px;
+}
+.home {
+    text-align: center;
+}
+.est {
+    text-align: center;
+    font-size: 20px;
+}
+.result {
+    text-align: center;
+    font-size: 30px;
+}
+.result > span {
+    color: var(--hov-col);
+    font-weight: bold;
+}
+label {
+    width: 200px;
+    display: inline-block;
+}
+input {
+    width: 300px;
+}
+.sex {
+    text-align: left;
+}
+canvas {
+    width:100%;
+    max-width:800px;
+}
+
+input {
+    width: 200px;
+}
+
+#map { 
+    height: 700px; 
+}
+  
+.error {
+    color: red;
+    font-weight: bold;
+    text-align: center;
+}
+
+.examples {
+    margin: auto;
+    width: fit-content;
+}
+
+.stats {
+    display: grid;
+    grid-template-areas:
+        'chartW links'
+        'chartA links';
+    grid-template-rows: 450px 450px;
+    grid-template-columns: 1fr 1fr;
+}
+.stats > div {
+    border: none;
+}
+.chartW {
+    grid-area: chartW;
+}
+.chartA {
+    grid-area: chartA;
+}
+.links {
+    grid-area: links;
+}
+table, th, tr, td {
+    padding: 10px;
+    border: 1px solid #999;
+    width: 100%;
+    border-collapse: collapse;
+    height: 30px;
+}
+caption {
+    padding: 10px;
+    font-weight: bold;
+    color: var(--hov-col);
+    font-size: 150%;
+}
+.scrollable {
+    width: auto;
+    height: 800px;
+    overflow-y: scroll;
+}
+

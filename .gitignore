@@ -1,1 +1,3 @@
 .venv
+webscrapper_log.txt
+**/__pycache__/
