@@ -2,13 +2,13 @@
 
 # pylint: disable=unused-argument
 
-import requests
 import pytest
+import requests
 import responses
-
-from webscraper import web_scraper, models
 from tests.test_data.animal import doggy, milka
+from tests.test_data.geolocation import geolocation
 from tests.test_data.list import lists
+from webscraper import models, web_scraper
 
 
 @pytest.fixture(name="remove_get_delay")
@@ -119,6 +119,12 @@ def test_list(remove_get_delay):
     )
     responses.add(
         responses.GET, milka.LINK, body=read_mock_file(milka.MOCK_FILE), status=200
+    )
+    responses.add(
+        responses.GET,
+        geolocation.LINK,
+        json=geolocation.RAW_RESPONSE,
+        status=200,
     )
 
     web_scraper.scrape(False)
