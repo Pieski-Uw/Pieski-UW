@@ -1,10 +1,10 @@
 # Pieski-UW
-Live demo is available at: https://pieski.arturkamieniecki.pl
 ![Lint Python Code](https://github.com/Pieski-Uw/Pieski-UW/actions/workflows/validate.yml/badge.svg)
 ![Python Tests](https://github.com/Pieski-Uw/Pieski-UW/actions/workflows/pytest.yml/badge.svg)
 ![Uptime Kuma](https://kuma.arturkamieniecki.pl//api/badge/1/uptime/24?label=Uptime%20Kuma)
 
 ## Getting Started
+Live demo is available at: https://pieski.arturkamieniecki.pl  
 Live demo is being prepared and will be available in the future.  
 To run this project localy:
 ```bash
